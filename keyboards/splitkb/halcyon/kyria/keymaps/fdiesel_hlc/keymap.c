@@ -57,6 +57,9 @@ enum custom_keycodes {
     CU_UE,
     CU_SU,
     CU_EU,
+    CU_QUOT,
+    CU_DQUO,
+    CU_GRV,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -106,6 +109,35 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_RALT);
             }
             return false;
+        case CU_QUOT:
+            if (record->event.pressed) {
+                register_code(KC_QUOT);
+                register_code(KC_SPC);
+            } else {
+                unregister_code(KC_SPC);
+                unregister_code(KC_QUOT);
+            }
+            return false;
+        case CU_DQUO:
+            if (record->event.pressed) {
+                register_code(KC_RSFT);
+                register_code(KC_QUOT);
+                register_code(KC_SPC);
+            } else {
+                unregister_code(KC_SPC);
+                unregister_code(KC_QUOT);
+                unregister_code(KC_RSFT);
+            }
+            return false;
+        case CU_GRV:
+            if (record->event.pressed) {
+                register_code(KC_GRV);
+                register_code(KC_SPC);
+            } else {
+                unregister_code(KC_GRV);
+                unregister_code(KC_SPC);
+            }
+            return false;
         default:
             return true;
     }
@@ -150,7 +182,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
  * |    ~   |  &   |  ß   |  $   |  $   |  %   |                              |   :  |  (   |  {   |  [   |  ;   |   -    |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * |    |   |   \  |  :   |  ;   |  -   |  [   |  {   |      |  |      |   }  |   %  |  _   |  ,   |  .   |  /   |   ?    |
+ * |    |   |   \  |  :   |  ;   |  -   |  [   |  {   |      |  |      |   }  |   %  |  _   |  ,   |  `   |  /   |   ?    |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
@@ -161,8 +193,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
     [_SYM] = LAYOUT_split_3x6_5_hlc(
       KC_GRV ,  KC_AT ,  KC_2  ,  CU_EU ,   KC_4 , KC_TILD,                                     KC_HASH, KC_RPRN, KC_RCBR, KC_RBRC,   KC_0 , KC_EQL ,
-     KC_TILD , KC_AMPR,  CU_SU , KC_DLR ,  KC_DLR, KC_PERC,                                     KC_COLN, KC_LPRN, KC_LCBR, KC_LBRC, KC_SCLN, KC_MINS,
-     KC_PIPE , KC_BSLS, KC_COLN, KC_SCLN, KC_MINS, KC_LBRC, KC_LCBR, _______, _______, KC_RCBR, KC_RBRC, KC_UNDS, KC_COMM,  KC_DOT, KC_SLSH, RSFT(KC_MINS),
+     KC_TILD , KC_AMPR,  CU_SU , KC_DLR ,  KC_DLR, LSFT(KC_8),                                  KC_COLN, KC_LPRN, KC_LCBR, KC_LBRC, KC_SCLN, KC_MINS,
+     KC_PIPE , KC_BSLS, KC_COLN, KC_SCLN, KC_MINS, KC_LBRC, KC_LCBR, _______, _______, KC_RCBR, KC_RBRC, CU_QUOT, CU_DQUO, CU_GRV , KC_SLSH, RSFT(KC_MINS),
                                  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
      _______, _______,  _______, _______, _______,                                                       _______, _______, _______, _______, _______
     ),
