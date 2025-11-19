@@ -6,10 +6,10 @@
 enum layers {
     _QWERTY = 0,
     _NUMBERS,
-    _COLEMAK_DH,
-    _NAV,
     _SYM,
+    _NAV,
     _FUNCTION,
+    _COLEMAK_DH,
     _ADJUST,
 };
 
@@ -18,7 +18,6 @@ enum layers {
 #define QWERTY   DF(_QWERTY)
 #define COLEMAK  DF(_COLEMAK_DH)
 
-#define SYM      MO(_SYM)
 #define FKEYS    MO(_FUNCTION)
 #define ADJUST   MO(_ADJUST)
 
@@ -32,8 +31,8 @@ enum layers {
 /* ##################################################################### */
 
 #define NUMBERS  LT(_NUMBERS, KC_TAB)
+#define SYM      LT(_SYM, KC_SPC)
 #define NAV      LT(_NAV, KC_BSPC)
-
 
 /* ##################################################################### */
 /* ############################ Homerow Mods ########################### */
@@ -52,28 +51,12 @@ enum layers {
 /* ############################ Custom Keys ############################ */
 /* ##################################################################### */
 
-// Helper function to register multiple keycodes
-void register_keycodes(uint16_t *codes, uint8_t count) {
-    for (uint8_t i = 0; i < count; i++) {
-        register_code(codes[i]);
-    }
-}
-
-#define REG_CODES(...) do { uint16_t codes[] = {__VA_ARGS__}; register_keycodes(codes, sizeof(codes)/sizeof(codes[0])); } while(0)
-
-// Helper function to unregister multiple keycodes
-void unregister_keycodes(uint16_t *codes, uint8_t count) {
-    for (uint8_t i = 0; i < count; i++) {
-        unregister_code(codes[i]);
-    }
-}
-
-#define UNREG_CODES(...) do { uint16_t codes[] = {__VA_ARGS__}; unregister_keycodes(codes, sizeof(codes)/sizeof(codes[0])); } while(0)
-
 enum custom_keycodes {
     CU_AE = SAFE_RANGE,
     CU_OE,
     CU_UE,
+    CU_SU,
+    CU_EU,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -105,15 +88,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_RALT);
             }
             return false;
-        case CU_LTCO:
+        case CU_SU:
             if (record->event.pressed) {
-                if (get_mods() & MOD_MASK_SHIFT) {
-                    REG_CODES(KC_LALT, KC_P6, KC_P0);
-                } else {
-                    REG_CODES(KC_LALT, KC_P4, KC_P4);
-                }
+                register_code(KC_RALT);
+                register_code(KC_S);
             } else {
-                UNREG_CODES(KC_LALT, KC_P6, KC_P0, KC_P4);
+                unregister_code(KC_S);
+                unregister_code(KC_RALT);
+            }
+            return false;
+        case CU_EU:
+            if (record->event.pressed) {
+                register_code(KC_RALT);
+                register_code(KC_5);
+            } else {
+                unregister_code(KC_5);
+                unregister_code(KC_RALT);
             }
             return false;
         default:
@@ -128,7 +118,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
- * Base Layer: QWERTZ
+ * Base Layer: QWERTY
  *
  * ,-------------------------------------------.                              ,-------------------------------------------.
  * |  Tab   |   Q  |   W  |   E  |   R  |   T  |                              |   Y  |   U  |   I  |   O  |   P  |    Ü   |
@@ -148,27 +138,52 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
      KC_TAB  , KC_Q ,  KC_W   ,  KC_E  ,   KC_R ,   KC_T ,                                         KC_Y ,   KC_U ,  KC_I ,   KC_O ,  KC_P ,  CU_UE ,
      KC_ESC  , HR_A ,  HR_S   ,  HR_D  ,   HR_F ,   KC_G ,                                         KC_H ,   HR_J ,  HR_K ,   HR_L , CU_OE ,  CU_AE ,
      KC_LSFT , KC_Z ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,KC_COMM, KC_DOT ,KC_SLSH, KC_RSFT,
-                                ADJUST , KC_LGUI, ALT_ENT, KC_SPC ,KC_ENT ,     NAV    , KC_SPC ,NUMBERS, KC_RGUI, KC_APP,
+                                ADJUST , KC_LGUI, ALT_ENT, KC_SPC ,KC_ENT ,     NAV    , SYM    ,NUMBERS, KC_RGUI, KC_APP,
      KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
     ),
-
-/* 
- * Base Layer: Numbers
+    
+/*
+ * Sym Layer: Numbers and symbols
  *
  * ,-------------------------------------------.                              ,-------------------------------------------.
- * |        |      |      |      |      |      |                              |      |   7  |   8  |   9  |      |        |
+ * |    `   |  1   |  2   |  3   |  4   |  5   |                              |   #  |  )   |  }   |  ]   |  0   |   =    |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
- * |        |      |      |      |      |      |                              |      |   4  |   5  |   6  |      |        |
+ * |    ~   |  !   |  ß   |  $   |  $   |  %   |                              |   :  |  (   |  [   |  [   |  ;   |   -    |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * |        |      |      |      |      |      |      |      |  |      |      |   0  |   1  |   2  |   3  |      |        |
+ * |    |   |   \  |  :   |  ;   |  -   |  [   |  {   |      |  |      |   }  |   ]  |  _   |  ,   |  .   |  /   |   ?    |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        |      |      |      |      |      |  |      |      |      |   0  |      |
+ *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        `----------------------------------'  `----------------------------------'
  * ,-----------------------------------.                                              ,-----------------------------------.
  * |      |      |       |      |      |                                              |      |      |       |      |      |
  * `-----------------------------------'                                              `-----------------------------------'
  */
+    [_SYM] = LAYOUT_split_3x6_5_hlc(
+      KC_GRV ,  KC_AT ,  KC_2  ,  CU_EU ,   KC_4 ,   KC_5 ,                                     KC_HASH, KC_RPRN, KC_RCBR, KC_RBRC,   KC_0 , KC_EQL ,
+     KC_TILD , KC_EXLM,  CU_SU , KC_DLR ,  KC_DLR, KC_PERC,                                     KC_COLN, KC_LPRN, KC_LCBR, KC_LBRC, KC_SCLN, KC_MINS,
+     KC_PIPE , KC_BSLS, KC_COLN, KC_SCLN, KC_MINS, KC_LBRC, KC_LCBR, _______, _______, KC_RCBR, KC_RBRC, KC_UNDS, KC_COMM,  KC_DOT, KC_SLSH, RSFT(KC_MINS),
+                                 _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+     _______, _______,  _______, _______, _______,                                                       _______, _______, _______, _______, _______
+    ),
+    
+    /* 
+    * Base Layer: Numbers
+    *
+    * ,-------------------------------------------.                              ,-------------------------------------------.
+    * |        |      |      |      |      |      |                              |      |   7  |   8  |   9  |      |        |
+    * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
+    * |        |      |      |      |      |      |                              |      |   4  |   5  |   6  |      |        |
+    * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
+    * |        |      |      |      |      |      |      |      |  |      |      |   0  |   1  |   2  |   3  |      |        |
+    * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
+    *                        |      |      |      |      |      |  |      |      |      |   0  |      |
+    *                        |      |      |      |      |      |  |      |      |      |      |      |
+    *                        `----------------------------------'  `----------------------------------'
+    * ,-----------------------------------.                                              ,-----------------------------------.
+    * |      |      |       |      |      |                                              |      |      |       |      |      |
+    * `-----------------------------------'                                              `-----------------------------------'
+    */
     [_NUMBERS] = LAYOUT_split_3x6_5_hlc(
       _______, _______, _______, _______, _______, _______,                                     _______,   KC_7 ,   KC_8 ,   KC_9 , _______, _______,
       _______, _______, _______, _______, _______, _______,                                     _______,   KC_4 ,   KC_5 ,   KC_6 , _______, _______,
@@ -177,32 +192,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
       _______, _______, _______, _______, _______,                                                       _______, _______, _______, _______, _______
     ),
-
-/*
- * Base Layer: Colemak DH
- *
- * ,-------------------------------------------.                              ,-------------------------------------------.
- * |  Tab   |   Q  |   W  |   F  |   P  |   B  |                              |   J  |   L  |   U  |   Y  | ;  : |  Bksp  |
- * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
- * |Ctrl/Esc|   A  |   R  |   S  |   T  |   G  |                              |   M  |   N  |   E  |   I  |   O  |Ctrl/' |
- * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * | LShift |   Z  |   X  |   C  |   D  |   V  | [ {  |CapsLk|  |F-keys|  ] } |   K  |   H  | ,  < | . >  | /  ? | RShift |
- * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        |Adjust| LGUI | LAlt/| Space| Nav  |  | Sym  | Space| AltGr| RGUI | Menu |
- *                        |      |      | Enter|      |      |  |      |      |      |      |      |
- *                        `----------------------------------'  `----------------------------------'
- * ,-----------------------------------.                                              ,-----------------------------------.
- * | MUTE | ____ | _____ | ____ | ____ |                                              | MUTE | ____ | _____ | ____ | ____ |
- * `-----------------------------------'                                              `-----------------------------------'
- */
-    [_COLEMAK_DH] = LAYOUT_split_3x6_5_hlc(
-     KC_TAB  , KC_Q ,  KC_W   ,  KC_F  ,   KC_P ,   KC_B ,                                        KC_J,   KC_L ,  KC_U ,   KC_Y ,KC_SCLN, KC_BSPC,
-     CTL_ESC , KC_A ,  KC_R   ,  KC_S  ,   KC_T ,   KC_G ,                                        KC_M,   KC_N ,  KC_E ,   KC_I ,  KC_O , CTL_QUOT,
-     KC_LSFT , KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, KC_RSFT,
-                                 ADJUST, KC_LGUI, ALT_ENT, KC_SPC , NAV   ,     SYM    , KC_SPC ,KC_RALT, KC_RGUI, KC_APP,
-     KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
-    ),
-
+    
 /*
  * Nav Layer: Media, navigation
  *
@@ -229,28 +219,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
 /*
- * Sym Layer: Numbers and symbols
+ * Base Layer: Colemak DH
  *
  * ,-------------------------------------------.                              ,-------------------------------------------.
- * |    `   |  1   |  2   |  3   |  4   |  5   |                              |   6  |  7   |  8   |  9   |  0   |   =    |
+ * |  Tab   |   Q  |   W  |   F  |   P  |   B  |                              |   J  |   L  |   U  |   Y  | ;  : |  Bksp  |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
- * |    ~   |  !   |  @   |  #   |  $   |  %   |                              |   ^  |  &   |  *   |  (   |  )   |   +    |
+ * |Ctrl/Esc|   A  |   R  |   S  |   T  |   G  |                              |   M  |   N  |   E  |   I  |   O  |Ctrl/' |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * |    |   |   \  |  :   |  ;   |  -   |  [   |  {   |      |  |      |   }  |   ]  |  _   |  ,   |  .   |  /   |   ?    |
+ * | LShift |   Z  |   X  |   C  |   D  |   V  | [ {  |CapsLk|  |F-keys|  ] } |   K  |   H  | ,  < | . >  | /  ? | RShift |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
- *                        |      |      |      |      |      |  |      |      |      |      |      |
- *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        |Adjust| LGUI | LAlt/| Space| Nav  |  | Sym  | Space| AltGr| RGUI | Menu |
+ *                        |      |      | Enter|      |      |  |      |      |      |      |      |
  *                        `----------------------------------'  `----------------------------------'
  * ,-----------------------------------.                                              ,-----------------------------------.
- * |      |      |       |      |      |                                              |      |      |       |      |      |
+ * | MUTE | ____ | _____ | ____ | ____ |                                              | MUTE | ____ | _____ | ____ | ____ |
  * `-----------------------------------'                                              `-----------------------------------'
  */
-    [_SYM] = LAYOUT_split_3x6_5_hlc(
-      KC_GRV ,   KC_1 ,   KC_2 ,   KC_3 ,   KC_4 ,   KC_5 ,                                       KC_6 ,   KC_7 ,   KC_8 ,   KC_9 ,   KC_0 , KC_EQL ,
-     KC_TILD , KC_EXLM,  KC_AT , KC_HASH,  KC_DLR, KC_PERC,                                     KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_PLUS,
-     KC_PIPE , KC_BSLS, KC_COLN, KC_SCLN, KC_MINS, KC_LBRC, KC_LCBR, _______, _______, KC_RCBR, KC_RBRC, KC_UNDS, KC_COMM,  KC_DOT, KC_SLSH, KC_QUES,
-                                 _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-     _______, _______,  _______, _______, _______,                                                       _______, _______, _______, _______, _______
+    [_COLEMAK_DH] = LAYOUT_split_3x6_5_hlc(
+     KC_TAB  , KC_Q ,  KC_W   ,  KC_F  ,   KC_P ,   KC_B ,                                        KC_J,   KC_L ,  KC_U ,   KC_Y ,KC_SCLN, KC_BSPC,
+     CTL_ESC , KC_A ,  KC_R   ,  KC_S  ,   KC_T ,   KC_G ,                                        KC_M,   KC_N ,  KC_E ,   KC_I ,  KC_O , CTL_QUOT,
+     KC_LSFT , KC_Z ,  KC_X   ,  KC_C  ,   KC_D ,   KC_V , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC, KC_K,   KC_H ,KC_COMM, KC_DOT ,KC_SLSH, KC_RSFT,
+                                 ADJUST, KC_LGUI, ALT_ENT, KC_SPC , NAV   ,     SYM    , KC_SPC ,KC_RALT, KC_RGUI, KC_APP,
+     KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
     ),
 
 /*
