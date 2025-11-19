@@ -29,6 +29,19 @@ enum layers {
 #define CTL_MINS MT(MOD_RCTL, KC_MINUS)
 #define ALT_ENT  MT(MOD_LALT, KC_ENT)
 
+/* ##################################################################### */
+/* ############################ Homerow Mods ########################### */
+/* ##################################################################### */
+
+#define HR_A     MT(MOD_LGUI, KC_A)
+#define HR_S     MT(MOD_LALT, KC_S)
+#define HR_D     MT(MOD_LSFT, KC_D)
+#define HR_F     MT(MOD_LCTL, KC_F)
+#define HR_J     MT(MOD_RCTL, KC_J)
+#define HR_K     MT(MOD_RSFT, KC_K)
+#define HR_L     MT(MOD_RALT, KC_L)
+#define HR_SCLN  MT(MOD_RGUI, KC_SCLN)
+
 // Note: LAlt/Enter (ALT_ENT) is not the same thing as the keyboard shortcut Alt+Enter.
 // The notation `mod/tap` denotes a key that activates the modifier `mod` when held down, and
 // produces the key `tap` when tapped (i.e. pressed and released).
@@ -54,7 +67,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
     [_QWERTZ] = LAYOUT_split_3x6_5_hlc(
      KC_TAB  , KC_Q ,  KC_W   ,  KC_E  ,   KC_R ,   KC_T ,                                        KC_Z,   KC_U ,  KC_I ,   KC_O ,  KC_P , KC_BSPC,
-     KC_ESC  , KC_A ,  KC_S   ,  KC_D  ,   KC_F ,   KC_G ,                                        KC_H,   KC_J ,  KC_K ,   KC_L ,KC_SCLN, KC_QUOT,
+     KC_ESC  , HR_A ,  HR_S   ,  HR_D  ,   HR_F ,   KC_G ,                                        KC_H,   HR_J ,  HR_K ,   HR_L ,HR_SCLN, KC_QUOT,
      KC_LSFT , KC_Y ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC, KC_N,   KC_M ,KC_COMM, KC_DOT ,KC_SLSH, KC_RSFT,
                                 ADJUST , KC_LGUI, ALT_ENT, KC_SPC , NAV   ,     SYM    , KC_SPC ,KC_RALT, KC_RGUI, KC_APP,
      KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
