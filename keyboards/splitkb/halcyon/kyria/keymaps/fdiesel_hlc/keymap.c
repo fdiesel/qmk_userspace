@@ -48,6 +48,36 @@ enum layers {
 #define HR_L     MT(MOD_RALT, KC_L)
 #define HR_SCLN  MT(MOD_RGUI, KC_SCLN)
 
+/* ##################################################################### */
+/* ############################ Custom Keys ############################ */
+/* ##################################################################### */
+
+enum custom_keycodes {
+    CU_SLQM = SAFE_RANGE,
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case CU_SLQM:
+            if (record->event.pressed) {
+                if (get_mods() & MOD_MASK_SHIFT) {
+                    // ? with shift (Shift+- on German QWERTZ)
+                    register_code(KC_MINS);
+                } else {
+                    // / without shift (- on German QWERTZ)
+                    register_code(KC_RALT);
+                    register_code(KC_MINS);
+                }
+            } else {
+                unregister_code(KC_MINS);
+                unregister_code(KC_RALT);
+            }
+            return false;
+        default:
+            return true;
+    }
+}
+
 // Note: LAlt/Enter (ALT_ENT) is not the same thing as the keyboard shortcut Alt+Enter.
 // The notation `mod/tap` denotes a key that activates the modifier `mod` when held down, and
 // produces the key `tap` when tapped (i.e. pressed and released).
@@ -74,7 +104,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTZ] = LAYOUT_split_3x6_5_hlc(
      KC_TAB  , KC_Q ,  KC_W   ,  KC_E  ,   KC_R ,   KC_T ,                                         KC_Z ,   KC_U ,  KC_I ,   KC_O ,  KC_P , KC_LBRC,
      KC_ESC  , HR_A ,  HR_S   ,  HR_D  ,   HR_F ,   KC_G ,                                         KC_H ,   HR_J ,  HR_K ,   HR_L ,HR_SCLN, KC_QUOT,
-     KC_LSFT , KC_Y ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,KC_COMM, KC_DOT ,KC_SLSH, KC_RSFT,
+     KC_LSFT , KC_Y ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,KC_COMM, KC_DOT ,CU_SLQM, KC_RSFT,
                                 ADJUST , KC_LGUI, ALT_ENT, KC_SPC ,KC_ENT ,     NAV    , KC_SPC ,NUMBERS, KC_RGUI, KC_APP,
      KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
     ),
