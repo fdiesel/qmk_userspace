@@ -52,8 +52,27 @@ enum layers {
 /* ############################ Custom Keys ############################ */
 /* ##################################################################### */
 
+// Helper function to register multiple keycodes
+void register_keycodes(uint16_t *codes, uint8_t count) {
+    for (uint8_t i = 0; i < count; i++) {
+        register_code(codes[i]);
+    }
+}
+
+#define REG_CODES(...) do { uint16_t codes[] = {__VA_ARGS__}; register_keycodes(codes, sizeof(codes)/sizeof(codes[0])); } while(0)
+
+// Helper function to unregister multiple keycodes
+void unregister_keycodes(uint16_t *codes, uint8_t count) {
+    for (uint8_t i = 0; i < count; i++) {
+        unregister_code(codes[i]);
+    }
+}
+
+#define UNREG_CODES(...) do { uint16_t codes[] = {__VA_ARGS__}; unregister_keycodes(codes, sizeof(codes)/sizeof(codes[0])); } while(0)
+
 enum custom_keycodes {
     CU_SLQM = SAFE_RANGE,
+    CU_LTCO,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -71,6 +90,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 unregister_code(KC_MINS);
                 unregister_code(KC_RALT);
+            }
+            return false;
+        case CU_LTCO:
+            if (record->event.pressed) {
+                if (get_mods() & MOD_MASK_SHIFT) {
+                    REG_CODES(KC_LALT, KC_P6, KC_P0);
+                } else {
+                    REG_CODES(KC_LALT, KC_P4, KC_P4);
+                }
+            } else {
+                UNREG_CODES(KC_LALT, KC_P6, KC_P0, KC_P4);
             }
             return false;
         default:
@@ -104,7 +134,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTZ] = LAYOUT_split_3x6_5_hlc(
      KC_TAB  , KC_Q ,  KC_W   ,  KC_E  ,   KC_R ,   KC_T ,                                         KC_Z ,   KC_U ,  KC_I ,   KC_O ,  KC_P , KC_LBRC,
      KC_ESC  , HR_A ,  HR_S   ,  HR_D  ,   HR_F ,   KC_G ,                                         KC_H ,   HR_J ,  HR_K ,   HR_L ,HR_SCLN, KC_QUOT,
-     KC_LSFT , KC_Y ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,KC_COMM, KC_DOT ,CU_SLQM, KC_RSFT,
+     KC_LSFT , KC_Y ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,CU_LTCO, KC_DOT ,CU_SLQM, KC_RSFT,
                                 ADJUST , KC_LGUI, ALT_ENT, KC_SPC ,KC_ENT ,     NAV    , KC_SPC ,NUMBERS, KC_RGUI, KC_APP,
      KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
     ),
