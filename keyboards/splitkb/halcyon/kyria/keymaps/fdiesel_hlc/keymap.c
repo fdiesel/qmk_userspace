@@ -4,7 +4,7 @@
 #include QMK_KEYBOARD_H
 
 enum layers {
-    _QWERTZ = 0,
+    _QWERTY = 0,
     _NUMBERS,
     _COLEMAK_DH,
     _NAV,
@@ -15,7 +15,7 @@ enum layers {
 
 
 // Aliases for readability
-#define QWERTZ   DF(_QWERTZ)
+#define QWERTY   DF(_QWERTY)
 #define COLEMAK  DF(_COLEMAK_DH)
 
 #define SYM      MO(_SYM)
@@ -71,24 +71,37 @@ void unregister_keycodes(uint16_t *codes, uint8_t count) {
 #define UNREG_CODES(...) do { uint16_t codes[] = {__VA_ARGS__}; unregister_keycodes(codes, sizeof(codes)/sizeof(codes[0])); } while(0)
 
 enum custom_keycodes {
-    CU_SLQM = SAFE_RANGE,
-    CU_LTCO,
+    CU_AE = SAFE_RANGE,
+    CU_OE,
+    CU_UE,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case CU_SLQM:
+        case CU_AE:
             if (record->event.pressed) {
-                if (get_mods() & MOD_MASK_SHIFT) {
-                    // ? with shift (Shift+- on German QWERTZ)
-                    register_code(KC_MINS);
-                } else {
-                    // / without shift (- on German QWERTZ)
-                    register_code(KC_RALT);
-                    register_code(KC_MINS);
-                }
+                register_code(KC_RALT);
+                register_code(KC_Q);
             } else {
-                unregister_code(KC_MINS);
+                unregister_code(KC_Q);
+                unregister_code(KC_RALT);
+            }
+            return false;
+        case CU_OE:
+            if (record->event.pressed) {
+                register_code(KC_RALT);
+                register_code(KC_P);
+            } else {
+                unregister_code(KC_P);
+                unregister_code(KC_RALT);
+            }
+            return false;
+        case CU_UE:
+            if (record->event.pressed) {
+                register_code(KC_RALT);
+                register_code(KC_Y);
+            } else {
+                unregister_code(KC_Y);
                 unregister_code(KC_RALT);
             }
             return false;
@@ -131,10 +144,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * | MUTE | ____ | _____ | ____ | ____ |                                              | MUTE | ____ | _____ | ____ | ____ |
  * `-----------------------------------'                                              `-----------------------------------'
  */
-    [_QWERTZ] = LAYOUT_split_3x6_5_hlc(
-     KC_TAB  , KC_Q ,  KC_W   ,  KC_E  ,   KC_R ,   KC_T ,                                         KC_Z ,   KC_U ,  KC_I ,   KC_O ,  KC_P , KC_LBRC,
-     KC_ESC  , HR_A ,  HR_S   ,  HR_D  ,   HR_F ,   KC_G ,                                         KC_H ,   HR_J ,  HR_K ,   HR_L ,HR_SCLN, KC_QUOT,
-     KC_LSFT , KC_Y ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,CU_LTCO, KC_DOT ,CU_SLQM, KC_RSFT,
+    [_QWERTY] = LAYOUT_split_3x6_5_hlc(
+     KC_TAB  , KC_Q ,  KC_W   ,  KC_E  ,   KC_R ,   KC_T ,                                         KC_Y ,   KC_U ,  KC_I ,   KC_O ,  KC_P ,  CU_UE ,
+     KC_ESC  , HR_A ,  HR_S   ,  HR_D  ,   HR_F ,   KC_G ,                                         KC_H ,   HR_J ,  HR_K ,   HR_L , CU_OE ,  CU_AE ,
+     KC_LSFT , KC_Z ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , KC_LBRC,KC_CAPS,     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,KC_COMM, KC_DOT ,KC_SLSH, KC_RSFT,
                                 ADJUST , KC_LGUI, ALT_ENT, KC_SPC ,KC_ENT ,     NAV    , KC_SPC ,NUMBERS, KC_RGUI, KC_APP,
      KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
     ),
@@ -269,7 +282,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * Adjust Layer: Default layer settings, RGB
  *
  * ,-------------------------------------------.                              ,-------------------------------------------.
- * |        |      |      |QWERTZ|      |      |                              |      |      |      |      |      |        |
+ * |        |      |      |QWERTY|      |      |                              |      |      |      |      |      |        |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
  * |        |      |      |Numbers|      |      |                              | TOG  | SAI  | HUI  | VAI  | MOD  |        |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
@@ -283,7 +296,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------'                                              `-----------------------------------'
  */
     [_ADJUST] = LAYOUT_split_3x6_5_hlc(
-      _______, _______, _______, QWERTZ , _______, _______,                                    _______, _______, _______, _______, _______, _______,
+      _______, _______, _______, QWERTY , _______, _______,                                    _______, _______, _______, _______, _______, _______,
       _______, _______, _______, NUMBERS , _______, _______,                                    RM_TOGG, RM_SATU, RM_HUEU, RM_VALU, RM_NEXT, _______,
       _______, _______, _______, COLEMAK, _______, _______,_______, _______, _______, _______, _______, RM_SATD, RM_HUED, RM_VALD, RM_PREV, _______,
                                  _______, _______, _______,_______, _______, _______, _______, _______, _______, _______,
