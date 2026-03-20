@@ -12,7 +12,6 @@
 #define RGB_MATRIX_DEFAULT_VAL     160
 #define RGB_MATRIX_DEFAULT_SPD     70
 
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 200
 #define RGB_MATRIX_SLEEP               // turn off when PC suspends
 
 // Fine-tuning step sizes (used by RM_* keycodes in ADJUST layer)
