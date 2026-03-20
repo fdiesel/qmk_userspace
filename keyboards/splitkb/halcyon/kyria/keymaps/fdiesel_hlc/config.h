@@ -6,11 +6,10 @@
 // -- RGB Matrix defaults: sky blue breathing --
 // Hue 145 ≈ 205° (electric azure-blue), Sat 210, Val 160, slow breath
 #define RGB_MATRIX_DEFAULT_ON      true
-#define RGB_MATRIX_DEFAULT_MODE    RGB_MATRIX_BREATHING
+#define RGB_MATRIX_DEFAULT_MODE    RGB_MATRIX_SOLID_COLOR
 #define RGB_MATRIX_DEFAULT_HUE     145
 #define RGB_MATRIX_DEFAULT_SAT     210
 #define RGB_MATRIX_DEFAULT_VAL     160
-#define RGB_MATRIX_DEFAULT_SPD     70
 
 #define RGB_MATRIX_SLEEP               // turn off when PC suspends
 
@@ -21,7 +20,6 @@
 #define RGB_MATRIX_SPD_STEP  10
 
 // Effects (keep selection small to save flash space)
-#define ENABLE_RGB_MATRIX_BREATHING
 #define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
 #define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
 #define ENABLE_RGB_MATRIX_BAND_VAL
