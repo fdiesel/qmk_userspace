@@ -49,6 +49,14 @@ enum layers {
 #define HR_SCLN  MT(MOD_RGUI, KC_SCLN)
 
 /* ##################################################################### */
+/* ############################ RGB Defaults ########################### */
+/* ##################################################################### */
+
+#define RGB_DEFAULT_H 145
+#define RGB_DEFAULT_S 210
+#define RGB_DEFAULT_V 160
+
+/* ##################################################################### */
 /* ############################ Custom Keys ############################ */
 /* ##################################################################### */
 
@@ -61,11 +69,24 @@ enum custom_keycodes {
     CU_QUOT,
     CU_DQUO,
     CU_GRV,
+    CU_IDLE,
 };
+
+static bool     anti_idle_active = false;
+static uint32_t anti_idle_timer  = 0;
+
+void housekeeping_task_user(void) {
+    if (anti_idle_active && is_keyboard_master()) {
+        if (timer_elapsed32(anti_idle_timer) >= 60000) {
+            tap_code(KC_PAUSE);
+            anti_idle_timer = timer_read32();
+        }
+    }
+}
 
 void keyboard_post_init_user(void) {
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-    rgb_matrix_sethsv_noeeprom(145, 210, 160);
+    rgb_matrix_sethsv_noeeprom(RGB_DEFAULT_H, RGB_DEFAULT_S, RGB_DEFAULT_V);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -144,6 +165,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_SPC);
             }
             return false;
+        case CU_IDLE:
+            if (record->event.pressed) {
+                anti_idle_active = !anti_idle_active;
+                if (anti_idle_active) {
+                    anti_idle_timer = timer_read32();
+                    rgb_matrix_sethsv_noeeprom(0, 255, 160);
+                } else {
+                    rgb_matrix_sethsv_noeeprom(RGB_DEFAULT_H, RGB_DEFAULT_S, RGB_DEFAULT_V);
+                }
+            }
+            return false;
         default:
             return true;
     }
@@ -175,7 +207,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_split_3x6_5_hlc(
      KC_TAB  , KC_Q ,  KC_W   ,  KC_E  ,   KC_R ,   KC_T ,                                         KC_Y ,   KC_U ,  KC_I ,   KC_O ,  KC_P ,  CU_UE ,
      KC_ESC  , HR_A ,  HR_S   ,  HR_D  ,   HR_F ,   KC_G ,                                         KC_H ,   HR_J ,  HR_K ,   HR_L , CU_OE ,  CU_AE ,
-     KC_NO   , KC_Z ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , LCTL(LSFT(KC_M)),LGUI(LSFT(KC_S)),     FKEYS  , KC_RBRC,  KC_N ,   KC_M ,KC_COMM, KC_DOT ,KC_SLSH,  KC_NO,
+     KC_NO   , KC_Z ,  KC_X   ,  KC_C  ,   KC_V ,   KC_B , LCTL(LSFT(KC_M)),LGUI(LSFT(KC_S)),     CU_IDLE, FKEYS  ,  KC_N ,   KC_M ,KC_COMM, KC_DOT ,KC_SLSH,  KC_NO,
                                 ADJUST , KC_LGUI, ALT_ENT, CMD_SPC,FUN    ,     NAV    , SYM    ,NUMBERS, KC_RGUI, KC_APP,
      KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
     ),
