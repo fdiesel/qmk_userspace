@@ -170,7 +170,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 anti_idle_active = !anti_idle_active;
                 if (anti_idle_active) {
                     anti_idle_timer = timer_read32();
-                    rgb_matrix_sethsv_noeeprom(0, 255, 160);
+                    rgb_matrix_sethsv_noeeprom(128, 220, 160);
                 } else {
                     rgb_matrix_sethsv_noeeprom(RGB_DEFAULT_H, RGB_DEFAULT_S, RGB_DEFAULT_V);
                 }
