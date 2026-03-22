@@ -4,6 +4,7 @@
 #pragma once
 
 // -- Tap-hold settings --
+#define TAPPING_TERM 200
 #define CHORDAL_HOLD
 
 // -- RGB Matrix defaults: sky blue breathing --
