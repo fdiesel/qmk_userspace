@@ -48,6 +48,25 @@ enum layers {
 #define HR_L     MT(MOD_RALT, KC_L)
 #define HR_SCLN  MT(MOD_RGUI, KC_SCLN)
 
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case HR_F:   // index — fast
+        case HR_J:
+            return 160;
+        case HR_D:// middle
+        case HR_K:
+            return 200;
+        case HR_S:   // ring
+        case HR_L:
+            return 220;
+        case HR_A:   // pinky — slowest
+        case HR_SCLN:
+            return 280;
+        default:
+            return TAPPING_TERM;
+    }
+}
+
 /* ##################################################################### */
 /* ############################ RGB Defaults ########################### */
 /* ##################################################################### */
