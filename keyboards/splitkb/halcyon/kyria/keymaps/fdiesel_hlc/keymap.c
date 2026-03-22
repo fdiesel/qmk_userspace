@@ -52,8 +52,8 @@ enum layers {
 /* ############################ RGB Defaults ########################### */
 /* ##################################################################### */
 
-#define RGB_DEFAULT_H 145
-#define RGB_DEFAULT_S 210
+#define RGB_DEFAULT_H 128
+#define RGB_DEFAULT_S 220
 #define RGB_DEFAULT_V 160
 
 /* ##################################################################### */
@@ -170,7 +170,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 anti_idle_active = !anti_idle_active;
                 if (anti_idle_active) {
                     anti_idle_timer = timer_read32();
-                    rgb_matrix_sethsv_noeeprom(128, 220, 160);
+                    rgb_matrix_sethsv_noeeprom(14, 235, 150);
                 } else {
                     rgb_matrix_sethsv_noeeprom(RGB_DEFAULT_H, RGB_DEFAULT_S, RGB_DEFAULT_V);
                 }
@@ -211,7 +211,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                 ADJUST , KC_LGUI, ALT_ENT, CMD_SPC,FUN    ,     NAV    , SYM    ,NUMBERS, KC_RGUI, KC_APP,
      KC_MUTE, KC_NO,  KC_NO, KC_NO, KC_NO,                                                                KC_MUTE, KC_NO, KC_NO, KC_NO, KC_NO
     ),
-    
+
 /*
  * Sym Layer: Symbols
  *
@@ -236,8 +236,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
      _______, _______,  _______, _______, _______,                                                       _______, _______, _______, _______, _______
     ),
-    
-    /* 
+
+    /*
     * Num Layer: Numbers
     *
     * ,-------------------------------------------.                              ,-------------------------------------------.
@@ -262,7 +262,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
       _______, _______, _______, _______, _______,                                                       _______, _______, _______, _______, _______
     ),
-    
+
 /*
  * Nav Layer: Media, navigation
  *
@@ -390,6 +390,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //       _______, _______, _______, _______, _______,                                                       _______, _______, _______, _______, _______
 //     ),
 };
+
+ const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM = LAYOUT_split_3x6_5_hlc(
+       'L', 'L', 'L', 'L', 'L', 'L',                                    'R', 'R', 'R', 'R', 'R', 'R',
+       'L', 'L', 'L', 'L', 'L', 'L',                                    'R', 'R', 'R', 'R', 'R', 'R',
+       'L', 'L', 'L', 'L', 'L', 'L', '*', '*', '*', '*', 'R', 'R', 'R', 'R', 'R', 'R',
+                      '*', '*', '*', '*', '*', '*', '*', '*', '*', '*',
+
+       'L', 'L', 'L', 'L', 'L',                                              'R', 'R', 'R', 'R', 'R'
+);
+
 
 #if defined(ENCODER_MAP_ENABLE)
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
