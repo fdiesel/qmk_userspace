@@ -26,6 +26,7 @@
 #define RGB_MATRIX_SPD_STEP  10
 
 // Effects (keep selection small to save flash space)
+#define ENABLE_RGB_MATRIX_BREATHING
 #define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
 #define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
 #define ENABLE_RGB_MATRIX_BAND_VAL

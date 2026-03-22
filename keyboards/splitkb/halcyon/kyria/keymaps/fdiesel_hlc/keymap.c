@@ -71,9 +71,17 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 /* ############################ RGB Defaults ########################### */
 /* ##################################################################### */
 
-#define RGB_DEFAULT_H 128
-#define RGB_DEFAULT_S 220
-#define RGB_DEFAULT_V 160
+static void set_rgb_default(void) {
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+    rgb_matrix_sethsv_noeeprom(128, 220, 160);
+    rgb_matrix_set_speed_noeeprom(RGB_MATRIX_DEFAULT_SPD);
+}
+
+static void set_rgb_idle(void) {
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_BREATHING);
+    rgb_matrix_sethsv_noeeprom(90, 210, 150);
+    rgb_matrix_set_speed_noeeprom(60);
+}
 
 /* ##################################################################### */
 /* ############################ Custom Keys ############################ */
@@ -104,8 +112,7 @@ void housekeeping_task_user(void) {
 }
 
 void keyboard_post_init_user(void) {
-    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-    rgb_matrix_sethsv_noeeprom(RGB_DEFAULT_H, RGB_DEFAULT_S, RGB_DEFAULT_V);
+    set_rgb_default();
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -189,9 +196,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 anti_idle_active = !anti_idle_active;
                 if (anti_idle_active) {
                     anti_idle_timer = timer_read32();
-                    rgb_matrix_sethsv_noeeprom(14, 235, 150);
+                    set_rgb_idle();
                 } else {
-                    rgb_matrix_sethsv_noeeprom(RGB_DEFAULT_H, RGB_DEFAULT_S, RGB_DEFAULT_V);
+                    set_rgb_default();
                 }
             }
             return false;
