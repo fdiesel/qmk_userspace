@@ -6,6 +6,7 @@
 // -- Tap-hold settings --
 #define TAPPING_TERM 200
 #define CHORDAL_HOLD
+#define PERMISSIVE_HOLD
 
 // -- RGB Matrix defaults: sky blue breathing --
 // Hue 145 ≈ 205° (electric azure-blue), Sat 210, Val 160, slow breath
