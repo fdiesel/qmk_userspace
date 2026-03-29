@@ -30,7 +30,7 @@ enum layers {
 /* ##################################################################### */
 
 #define NUMBERS  LT(_NUMBERS, KC_TAB)
-#define SYM      LT(_SYM, KC_SPC)
+#define SYM      LT(_SYM, KC_DEL)
 #define NAV      LT(_NAV, KC_BSPC)
 #define FUN      LT(_FUNCTION, KC_ENT)
 #define CMD_SPC  LT(_CMD, KC_SPC)
