@@ -18,7 +18,7 @@ enum layers {
 #define QWERTY   DF(_QWERTY)
 
 #define FKEYS    MO(_FUNCTION)
-#define ADJUST   MO(_ADJUST)
+#define ADJUST   KC_MUTE
 
 #define CTL_ESC  MT(MOD_LCTL, KC_ESC)
 #define CTL_QUOT MT(MOD_RCTL, KC_QUOTE)
